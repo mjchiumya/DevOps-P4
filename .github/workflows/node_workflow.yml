@@ -5,6 +5,7 @@ on: [push]
 jobs:
 
    test:
+     needs: build
      name: Test on node ${{ matrix.node_version }} and ${{ matrix.os }}
      runs-on: ${{ matrix.os }}
      strategy:
@@ -17,16 +18,19 @@ jobs:
           - 14
      steps:
      - uses: actions/checkout@v2
+     - uses: actions/upload-artifacts@main
+       with: 
+         name: webpack artifact
+         path: public
      - name: Use Node.js ${{ matrix.node_version }}
        uses: actions/setup-node@v2
        with:
         version: ${{ matrix.node_version }}    
-     - name: npm install, build and test
+     - name: npm install and test
        run: |
-        npm install
-        npm run build --if-present
-        npm test
-
+          npm install
+          run: npm test -- -u
+       
    build:
     name: build on node ${{ matrix.node_version }} and ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -44,5 +48,12 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node_version }}         
-      - run: npm install
-      - run: npm test -- -u
+          run: |
+           npm install
+           npm run build --if-present
+        env:
+           CI: true
+      - uses: actions/upload-artifacts@main
+        with: 
+         name: webpack artifact
+         path: public/
