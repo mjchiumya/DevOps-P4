@@ -29,7 +29,7 @@ jobs:
      - name: npm install and test
        run: |
           npm install
-          run: npm test -- -u
+          npm test -- -u
        
    build:
     name: build on node ${{ matrix.node_version }} and ${{ matrix.os }}
